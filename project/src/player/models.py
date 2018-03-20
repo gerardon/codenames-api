@@ -1,6 +1,7 @@
+import random, string
 from collections import Counter
 from django.db import models
-from src.constants import TEAMS
+from src.constants import TEAMS, RED, BLUE
 
 class Player(models.Model):
     name = models.CharField(max_length=50)
@@ -14,8 +15,13 @@ class Player(models.Model):
             counter = Counter(
                 self.board.player_set.values_list('team', flat=True)
             )
-            if not counter.most_common():
+            most_common = counter.most_common()
+            if not most_common or (len(most_common) > 1 and most_common[0][1] == most_common[1][1]):
                 self.team = self.board.starting_team
+            elif len(most_common) == 1:
+                teams = [RED, BLUE]
+                teams.remove(most_common[0][0])
+                self.team = teams[0]
             else:
                 self.team = counter.most_common()[-1][0]
 
