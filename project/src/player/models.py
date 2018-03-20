@@ -14,9 +14,9 @@ class Player(models.Model):
             counter = Counter(
                 self.board.player_set.values_list('team', flat=True)
             )
+            self.team = counter.most_common()[-1][0]
             if not counter.most_common():
                 self.team = self.board.starting_team
-            self.team = counter.most_common()[-1][0]
 
             if self.board.player_set.filter(team=self.team).count() == 0:
                 self.is_leader = True
